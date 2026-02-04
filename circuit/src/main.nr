@@ -81,6 +81,12 @@ fn verify_old_note(
     }
 }
 
+fn verify_new_note(
+    new_note: Note,
+    new_note_hash: Field,
+) {
+    assert_eq(note_hash(new_note), new_note_hash, "New note hash does not match");
+}
 
 
 
