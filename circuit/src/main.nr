@@ -50,6 +50,7 @@ fn verify_old_note(
     pbm_token_id: u32,
     donor_public_key_x: Field,
     donor_public_key_y: Field,
+    owner_private_key: std::embedded_curve_ops::EmbeddedCurveScalar,
     merkle_root: Field,
     merkle_index: u32,
     merkle_path: [Field; MERKLE_DEPTH],
@@ -59,6 +60,11 @@ fn verify_old_note(
     {
         let derived_donor_hash = poseidon::bn254::hash_2([donor_public_key_x, donor_public_key_y]);
         assert_eq(old_note.donor, derived_donor_hash, "Donor public key mismatch for old note");
+    }
+    {
+        let derived_owner_public_point = std::embedded_curve_ops::fixed_base_scalar_mul(owner_private_key);
+        let derived_owner_hash = poseidon::bn254::hash_2([derived_owner_public_point.x, derived_owner_public_point.y]);
+        assert_eq(derived_owner_hash, old_note.owner, "Owner private key mismatch for old note");
     }
 
     let old_note_hash = note_hash(old_note);
