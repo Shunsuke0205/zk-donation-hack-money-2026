@@ -8,6 +8,17 @@ struct Note {
     salt: Field,
 }
 
+fn note_hash(note: Note) -> Field {
+    let inputs = [
+        note.amount,
+        note.pbm_token_id,
+        note.owner,
+        note.donor,
+        note.salt,
+    ];
+    poseidon::bn254::hash_5(inputs)
+}
+
 fn main(x: u64, y: pub u64) {
     assert(x != y);
 }
