@@ -47,13 +47,19 @@ fn compute_merkle_proof(
 
 fn verify_old_note(
     old_note: Note,
+    pbm_token_id: u32,
+    donor_public_key_x: Field,
+    donor_public_key_y: Field,
     merkle_root: Field,
     merkle_index: u32,
     merkle_path: [Field; MERKLE_DEPTH],
     is_dummy: bool,
-    pbm_token_id: u32,
 ) {
     assert_eq(old_note.pbm_token_id, pbm_token_id, "PBM Token ID does not match");
+    {
+        let derived_donor_hash = poseidon::bn254::hash_2([donor_public_key_x, donor_public_key_y]);
+        assert_eq(old_note.donor, derived_donor_hash, "Donor public key mismatch for old note");
+    }
 
     let old_note_hash = note_hash(old_note);
     let calculated_merkle_root = compute_merkle_proof(old_note_hash, merkle_index, merkle_path);
