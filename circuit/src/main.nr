@@ -114,6 +114,24 @@ fn verify_new_note(
     assert_eq(new_note.donor, derived_donor_hash, "Donor public key mismatch for new note");
 }
 
+fn verify_encryption(
+    encryption_randomness: std::embedded_curve_ops::EmbeddedCurveScalar,
+    public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+    shared_secret_low: Field,
+    shared_secret_high: Field,
+    encrypted_key_low: Field,
+    encrypted_key_high: Field,
+) {
+    let shared_point: std::embedded_curve_ops::EmbeddedCurvePoint = std::embedded_curve_ops::multi_scalar_mul([public_point], [encryption_randomness]);
+
+    let keystream_low = poseidon::bn254::hash_2([shared_point.x, 1]);
+    let keystream_high = poseidon::bn254::hash_2([shared_point.x, 2]);
+    let derived_encrypted_key_low = shared_secret_low + keystream_low;
+    let derived_encrypted_key_high = shared_secret_high + keystream_high;
+
+    assert_eq(derived_encrypted_key_low, encrypted_key_low, "Encrypted key low mismatch");
+    assert_eq(derived_encrypted_key_high, encrypted_key_high, "Encrypted key high mismatch");
+}
 
 
 fn main(x: u64, y: pub u64) {
