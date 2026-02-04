@@ -5,7 +5,7 @@ use dep::poseidon::poseidon;
 global MERKLE_DEPTH: u32 = 3; // 3 for demo
 
 struct Note {
-    amount: Field,  // Purpose Bound Money amount
+    amount: u64,  // Purpose Bound Money amount
     pbm_token_id: Field,
     owner: Field,   // Hash(Pubkey) of Sender (for old) or Receiver (for new)
     donor: Field,   // Hash(Pubkey) of the Original Donor (Fixed)
@@ -14,7 +14,7 @@ struct Note {
 
 fn note_hash(note: Note) -> Field {
     let inputs = [
-        note.amount,
+        note.amount as Field,
         note.pbm_token_id,
         note.owner,
         note.donor,
@@ -57,7 +57,7 @@ fn verify_old_note(
     if is_dummy {
         assert_eq(old_note.amount, 0, "Dummy note amount must be zero");
     } else {
-        assert(old_note.amount as u64 > 0, "Old note amount must be greater than zero");
+        assert(old_note.amount > 0, "Old note amount must be greater than zero");
         assert_eq(calculated_merkle_root, merkle_root, "Merkle root does not match");
     }
 }
