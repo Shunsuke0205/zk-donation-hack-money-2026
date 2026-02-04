@@ -51,6 +51,7 @@ fn verify_old_note(
     donor_public_key_x: Field,
     donor_public_key_y: Field,
     owner_private_key: std::embedded_curve_ops::EmbeddedCurveScalar,
+    nullifier: Field,
     merkle_root: Field,
     merkle_index: u32,
     merkle_path: [Field; MERKLE_DEPTH],
@@ -68,6 +69,9 @@ fn verify_old_note(
     }
 
     let old_note_hash = note_hash(old_note);
+    let derived_nullifier = poseidon::bn254::hash_3([old_note_hash, owner_private_key.hi, owner_private_key.lo]);
+    assert_eq(derived_nullifier, nullifier, "Nullifier does not match");
+
     let calculated_merkle_root = compute_merkle_proof(old_note_hash, merkle_index, merkle_path);
     if is_dummy {
         assert_eq(old_note.amount, 0, "Dummy note amount must be zero");
