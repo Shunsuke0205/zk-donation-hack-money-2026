@@ -85,10 +85,17 @@ fn verify_new_note(
     new_note: Note,
     new_note_hash: Field,
     pbm_token_id: u32,
+    receiver_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
 ) {
     assert_eq(note_hash(new_note), new_note_hash, "New note hash does not match");
-    
+
     assert_eq(new_note.pbm_token_id, pbm_token_id, "PBM Token ID does not match for new note");
+
+    let derived_receiver_hash = poseidon::bn254::hash_2([
+        receiver_public_point.x,
+        receiver_public_point.y,
+    ]);
+    assert_eq(new_note.owner, derived_receiver_hash, "Receiver public key mismatch for new note");
 }
 
 
