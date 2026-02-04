@@ -1,3 +1,5 @@
+// All comments must be in English.
+
 use dep::poseidon::poseidon;
 
 global MERKLE_DEPTH: u32 = 3; // 3 for demo
@@ -56,4 +58,39 @@ fn test_main() {
 
     // Uncomment to make test fail
     // main(1, 1);
+}
+
+#[test]
+fn test_compute_merkle_proof() {
+    let leaf = 0x1234;
+    
+    let node_a = 0x5678;
+    let node_c = 0x9abc;
+    let node_e = 0xdef0;
+
+    let path = [node_a, node_c, node_e];
+    let index = 2; // 010 in binary
+
+    let level_1 = poseidon::bn254::hash_2([leaf, node_a]);
+    
+    let level_2 = poseidon::bn254::hash_2([node_c, level_1]);
+    
+    let expected_root = poseidon::bn254::hash_2([level_2, node_e]);
+
+    let calculated_root = compute_merkle_proof(leaf, index, path);
+    
+    assert(calculated_root == expected_root);
+}
+
+#[test]
+fn test_merkle_proof_different_index() {
+    let leaf = 0x111;
+    let sibling = 0x222;
+    let path = [sibling, 0x333, 0x444];
+    
+    let root_0 = compute_merkle_proof(leaf, 0, path);
+    
+    let root_1 = compute_merkle_proof(leaf, 1, path);
+    
+    assert(root_0 != root_1);
 }
