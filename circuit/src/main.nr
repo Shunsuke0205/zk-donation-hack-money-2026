@@ -51,7 +51,10 @@ fn verify_old_note(
     merkle_index: u32,
     merkle_path: [Field; MERKLE_DEPTH],
     is_dummy: bool,
+    pbm_token_id: u32,
 ) {
+    assert_eq(old_note.pbm_token_id, pbm_token_id, "PBM Token ID does not match");
+
     let old_note_hash = note_hash(old_note);
     let calculated_merkle_root = compute_merkle_proof(old_note_hash, merkle_index, merkle_path);
     if is_dummy {
