@@ -6,7 +6,7 @@ global MERKLE_DEPTH: u32 = 3; // 3 for demo
 
 struct Note {
     amount: u64,  // Purpose Bound Money amount
-    pbm_token_id: Field,
+    pbm_token_id: u32,
     owner: Field,   // Hash(Pubkey) of Sender (for old) or Receiver (for new)
     donor: Field,   // Hash(Pubkey) of the Original Donor (Fixed)
     salt: Field,
@@ -15,7 +15,7 @@ struct Note {
 fn note_hash(note: Note) -> Field {
     let inputs = [
         note.amount as Field,
-        note.pbm_token_id,
+        note.pbm_token_id as Field,
         note.owner,
         note.donor,
         note.salt,
