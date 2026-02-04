@@ -1,3 +1,4 @@
+use dep::poseidon::poseidon;
 
 struct Note {
     amount: Field,  // Purpose Bound Money amount
