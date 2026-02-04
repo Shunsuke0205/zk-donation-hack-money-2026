@@ -50,10 +50,16 @@ fn verify_old_note(
     merkle_root: Field,
     merkle_index: u32,
     merkle_path: [Field; MERKLE_DEPTH],
+    is_dummy: bool,
 ) {
     let old_note_hash = note_hash(old_note);
     let calculated_merkle_root = compute_merkle_proof(old_note_hash, merkle_index, merkle_path);
-    assert_eq(calculated_merkle_root, merkle_root, "Merkle root does not match");
+    if is_dummy {
+        assert_eq(old_note.amount, 0, "Dummy note amount must be zero");
+    } else {
+        assert(old_note.amount as u64 > 0, "Old note amount must be greater than zero");
+        assert_eq(calculated_merkle_root, merkle_root, "Merkle root does not match");
+    }
 }
 
 
