@@ -117,11 +117,18 @@ fn verify_new_note(
 fn verify_encryption(
     encryption_randomness: std::embedded_curve_ops::EmbeddedCurveScalar,
     public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+    ephemeral_public_point: std::embedded_curve_ops::EmbeddedCurvePoint, // [TX output]
     shared_secret_low: Field,
     shared_secret_high: Field,
     encrypted_key_low: Field,
     encrypted_key_high: Field,
 ) {
+    {
+        let derived_ephemeral_public_point = std::embedded_curve_ops::fixed_base_scalar_mul(encryption_randomness);
+        assert_eq(derived_ephemeral_public_point.x, ephemeral_public_point.x, "Ephemeral public point X mismatch");
+        assert_eq(derived_ephemeral_public_point.y, ephemeral_public_point.y, "Ephemeral public point Y mismatch");
+    }
+
     let shared_point: std::embedded_curve_ops::EmbeddedCurvePoint = std::embedded_curve_ops::multi_scalar_mul([public_point], [encryption_randomness]);
 
     let keystream_low = poseidon::bn254::hash_2([shared_point.x, 1]);
