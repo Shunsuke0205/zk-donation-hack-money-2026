@@ -344,7 +344,7 @@ fn print_helper_curve_point<let N: u32>(name: str<N>, point: std::embedded_curve
     std::print(point.x);
     std::print("\", y = \"");
     std::print(point.y);
-    std::println("\" }");
+    std::println("\", is_infinite = false }");
 }
 
 fn print_helper_low_and_high<let N: u32, T>(name: str<N>, low: T, high: T) {
