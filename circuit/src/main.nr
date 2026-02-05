@@ -169,8 +169,8 @@ fn main(
 
     nullifier_1: pub Field,
     nullifier_2: pub Field,
-    new_note_hash_1: pub Field,
-    new_note_hash_2: pub Field,
+    new_note_1_hash: pub Field,
+    new_note_2_hash: pub Field,
 
     encrypted_key_for_receiver_1: pub Ciphertext,
     encrypted_key_for_receiver_2: pub Ciphertext,
@@ -228,14 +228,14 @@ fn main(
 
     verify_new_note(
         new_note_1,
-        new_note_hash_1,
+        new_note_1_hash,
         pbm_token_id,
         receiver_1_public_point,
         funder_public_point,
     );
     verify_new_note(
         new_note_2,
-        new_note_hash_2,
+        new_note_2_hash,
         pbm_token_id,
         receiver_2_public_point,
         funder_public_point,
