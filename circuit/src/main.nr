@@ -157,17 +157,129 @@ fn verify_encryption(
 }
 
 
-fn main(x: u64, y: pub u64) {
-    assert(x != y);
+
+fn main(
+    receiver_1_public_point: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+    receiver_2_public_point: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+    funder_public_point: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+
+    pbm_token_id: pub u32,
+    merkle_root_1: pub Field,
+    merkle_root_2: pub Field,
+
+    nullifier_1: pub Field,
+    nullifier_2: pub Field,
+    new_note_hash_1: pub Field,
+    new_note_hash_2: pub Field,
+
+    encrypted_key_for_receiver_1: pub Ciphertext,
+    encrypted_key_for_receiver_2: pub Ciphertext,
+    encrypted_key_1_for_funder: pub Ciphertext,
+    encrypted_key_2_for_funder: pub Ciphertext,
+
+    ephemeral_public_point_for_receiver_1: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+    ephemeral_public_point_for_receiver_2: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+    ephemeral_public_point_1_for_funder: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+    ephemeral_public_point_2_for_funder: pub std::embedded_curve_ops::EmbeddedCurvePoint,
+
+    // Private Inputs
+    owner_private_key: std::embedded_curve_ops::EmbeddedCurveScalar,
+
+    old_note_1: Note,
+    old_note_2: Note,
+    merkle_path_1: [Field; MERKLE_DEPTH],
+    merkle_path_2: [Field; MERKLE_DEPTH],
+    merkle_index_1: u32,
+    merkle_index_2: u32,
+    is_dummy_1: bool,
+    is_dummy_2: bool,
+    new_note_1: Note,
+    new_note_2: Note,
+
+    shared_key_1: Scalar256bit,
+    shared_key_2: Scalar256bit,
+    encryption_randomness_for_receiver_1: std::embedded_curve_ops::EmbeddedCurveScalar,
+    encryption_randomness_for_receiver_2: std::embedded_curve_ops::EmbeddedCurveScalar,
+    encryption_randomness_1_for_funder: std::embedded_curve_ops::EmbeddedCurveScalar,
+    encryption_randomness_2_for_funder: std::embedded_curve_ops::EmbeddedCurveScalar,
+) {
+    verify_old_note(
+        old_note_1,
+        pbm_token_id,
+        funder_public_point,
+        owner_private_key,
+        nullifier_1,
+        merkle_root_1,
+        merkle_index_1,
+        merkle_path_1,
+        is_dummy_1,
+    );
+    verify_old_note(
+        old_note_2,
+        pbm_token_id,
+        funder_public_point,
+        owner_private_key,
+        nullifier_2,
+        merkle_root_2,
+        merkle_index_2,
+        merkle_path_2,
+        is_dummy_2,
+    );
+
+    verify_new_note(
+        new_note_1,
+        new_note_hash_1,
+        pbm_token_id,
+        receiver_1_public_point,
+        funder_public_point,
+    );
+    verify_new_note(
+        new_note_2,
+        new_note_hash_2,
+        pbm_token_id,
+        receiver_2_public_point,
+        funder_public_point,
+    );
+
+    {
+        let input_sum = old_note_1.amount + old_note_2.amount;
+        let output_sum = new_note_1.amount + new_note_2.amount;
+        assert_eq(input_sum, output_sum, "Total amount imbalance (2-in, 2-out)");
+    }
+
+
+    verify_encryption(
+        encryption_randomness_for_receiver_1,
+        receiver_1_public_point,
+        ephemeral_public_point_for_receiver_1,
+        shared_key_1,
+        encrypted_key_for_receiver_1,
+    );
+    verify_encryption(
+        encryption_randomness_for_receiver_2,
+        receiver_2_public_point,
+        ephemeral_public_point_for_receiver_2,
+        shared_key_2,
+        encrypted_key_for_receiver_2,
+    );
+    verify_encryption(
+        encryption_randomness_1_for_funder,
+        funder_public_point,
+        ephemeral_public_point_1_for_funder,
+        shared_key_1,
+        encrypted_key_1_for_funder,
+    );
+    verify_encryption(
+        encryption_randomness_2_for_funder,
+        funder_public_point,
+        ephemeral_public_point_2_for_funder,
+        shared_key_2,
+        encrypted_key_2_for_funder,
+    );
 }
 
-#[test]
-fn test_main() {
-    main(1, 2);
 
-    // Uncomment to make test fail
-    // main(1, 1);
-}
+
 
 #[test]
 fn test_compute_merkle_proof() {
