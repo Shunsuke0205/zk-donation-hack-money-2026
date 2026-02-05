@@ -274,3 +274,64 @@ fn test_fail_wrong_randomness() {
         dummy_cipher
     );
 }
+
+fn decrypt(
+    encrypted_key: Ciphertext,
+    shared_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+) -> Scalar256bit {
+    let keystream_low = poseidon::bn254::hash_2([shared_point.x, 1]);
+    let keystream_high = poseidon::bn254::hash_2([shared_point.x, 2]);
+
+    let decrypted_low = (encrypted_key.low - keystream_low) as u128;
+    let decrypted_high = (encrypted_key.high - keystream_high) as u128;
+
+    Scalar256bit {
+        low: decrypted_low,
+        high: decrypted_high,
+    }
+}
+
+#[test]
+fn test_decrypt() {
+    let recipient_priv_key = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 0x11111,
+        hi: 0x22222,
+    };
+    let recipient_pub_point = std::embedded_curve_ops::fixed_base_scalar_mul(recipient_priv_key);
+
+    
+    let original_payload = Scalar256bit {
+        low: 123456789,
+        high: 987654321,
+    };
+
+    let randomness = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 0xabcdef,
+        hi: 0x123456,
+    };
+    
+    let ephemeral_pub_point = std::embedded_curve_ops::fixed_base_scalar_mul(randomness);
+
+    let shared_point_sender = std::embedded_curve_ops::multi_scalar_mul([recipient_pub_point], [randomness]);
+    
+    let ciphertext = Ciphertext {
+        low: encrypt_128bit_with_curve_point(original_payload.low, shared_point_sender, 1),
+        high: encrypt_128bit_with_curve_point(original_payload.high, shared_point_sender, 2),
+    };
+
+    verify_encryption(
+        randomness,
+        recipient_pub_point,
+        ephemeral_pub_point,
+        original_payload,
+        ciphertext,
+    );
+
+    
+    let shared_point_recipient = std::embedded_curve_ops::multi_scalar_mul([ephemeral_pub_point], [recipient_priv_key]);
+
+    let decrypted_payload = decrypt(ciphertext, shared_point_recipient);
+
+    assert(decrypted_payload.low == original_payload.low);
+    assert(decrypted_payload.high == original_payload.high);
+}
