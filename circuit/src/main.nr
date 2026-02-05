@@ -48,7 +48,7 @@ fn compute_merkle_proof(
 fn verify_old_note(
     old_note: Note,
     pbm_token_id: u32,
-    donor_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+    funder_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
     owner_private_key: std::embedded_curve_ops::EmbeddedCurveScalar,
     nullifier: Field,
     merkle_root: Field,
@@ -58,11 +58,11 @@ fn verify_old_note(
 ) {
     assert_eq(old_note.pbm_token_id, pbm_token_id, "PBM Token ID does not match");
     {
-        let derived_donor_hash = poseidon::bn254::hash_2([
-            donor_public_point.x,
-            donor_public_point.y,
+        let derived_funder_hash = poseidon::bn254::hash_2([
+            funder_public_point.x,
+            funder_public_point.y,
         ]);
-        assert_eq(old_note.donor, derived_donor_hash, "Donor public key mismatch for old note");
+        assert_eq(old_note.donor, derived_funder_hash, "Funder public key mismatch for old note");
     }
     {
         let derived_owner_public_point = std::embedded_curve_ops::fixed_base_scalar_mul(owner_private_key);
