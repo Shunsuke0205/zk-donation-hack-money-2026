@@ -307,6 +307,56 @@ fn encrypt(
 }
 
 
+fn print_helper<let N: u32, T>(field_name: str<N>, value: T) {
+    std::print(field_name);
+    std::print(" = \"");
+    std::print(value);
+    std::println("\"");
+}
+
+fn print_helper_note<let N: u32>(name: str<N>, note: Note) {
+    std::print(name);
+    std::print(" = { amount = \"");
+    std::print(note.amount);
+    std::print("\", pbm_token_id = \"");
+    std::print(note.pbm_token_id);
+    std::print("\", owner = \"");
+    std::print(note.owner);
+    std::print("\", funder = \"");
+    std::print(note.funder);
+    std::print("\", salt = \"");
+    std::print(note.salt);
+    std::println("\" }");
+}
+
+fn print_helper_scalar<let N: u32>(name: str<N>, scalar: std::embedded_curve_ops::EmbeddedCurveScalar) {
+    std::print(name);
+    std::print(" = { hi = \"");
+    std::print(scalar.hi);
+    std::print("\", lo = \"");
+    std::print(scalar.lo);
+    std::println("\" }");
+}
+
+fn print_helper_curve_point<let N: u32>(name: str<N>, point: std::embedded_curve_ops::EmbeddedCurvePoint) {
+    std::print(name);
+    std::print(" = { x = \"");
+    std::print(point.x);
+    std::print("\", y = \"");
+    std::print(point.y);
+    std::println("\" }");
+}
+
+fn print_helper_low_and_high<let N: u32, T>(name: str<N>, low: T, high: T) {
+    std::print(name);
+    std::print(" = { low = \"");
+    std::print(low);
+    std::print("\", high = \"");
+    std::print(high);
+    std::println("\" }");
+}
+
+
 #[test]
 fn test_main() {
     // =======================
@@ -561,6 +611,74 @@ fn test_main() {
 
     std::println("Step 5: PROOF VERIFIED SUCCESSFULLY!");
 
+
+
+    // --- Print for Prover.toml ---
+    std::println("\n--- COPY BELOW INTO Prover.toml ---");
+
+    // Public Inputs
+    print_helper_curve_point("receiver_1_public_point", receiver_1_public_point);
+    print_helper_curve_point("receiver_2_public_point", receiver_2_public_point);
+    print_helper_curve_point("funder_public_point", funder_public_point);
+    print_helper("pbm_token_id", pbm_token_id);
+    print_helper("merkle_root_1", merkle_root);
+    print_helper("merkle_root_2", merkle_root);
+    print_helper("nullifier_1", nullifier_1);
+    print_helper("nullifier_2", nullifier_2);
+    print_helper("new_note_1_hash", new_note_1_hash);
+    print_helper("new_note_2_hash", new_note_2_hash);
+
+    print_helper_low_and_high("encrypted_key_for_receiver_1", encrypted_key_for_receiver_1.low, encrypted_key_for_receiver_1.high);
+    print_helper_low_and_high("encrypted_key_for_receiver_2", encrypted_key_for_receiver_2.low, encrypted_key_for_receiver_2.high);
+    print_helper_low_and_high("encrypted_key_1_for_funder", encrypted_key_1_for_funder.low, encrypted_key_1_for_funder.high);
+    print_helper_low_and_high("encrypted_key_2_for_funder", encrypted_key_2_for_funder.low, encrypted_key_2_for_funder.high);
+
+    print_helper_curve_point("ephemeral_public_point_for_receiver_1", ephemeral_public_point_for_receiver_1);
+    print_helper_curve_point("ephemeral_public_point_for_receiver_2", ephemeral_public_point_for_receiver_2);
+    print_helper_curve_point("ephemeral_public_point_1_for_funder", ephemeral_public_point_1_for_funder);
+    print_helper_curve_point("ephemeral_public_point_2_for_funder", ephemeral_public_point_2_for_funder);
+
+
+    // Private Inputs
+    print_helper_scalar("owner_private_key", owner_private_key);
+
+    // --- Note ---
+    print_helper_note("old_note_1", old_note_1);
+    print_helper_note("old_note_2", old_note_2);
+
+    // --- Arrays/Paths ---
+    std::print("merkle_path_1 = [");
+    for i in 0..MERKLE_DEPTH {
+        std::print("\""); std::print(merkle_path_1[i]); std::print("\", ");
+    }
+    std::println("]");
+
+    std::print("merkle_path_2 = [");
+    for i in 0..MERKLE_DEPTH {
+        std::print("\""); std::print(merkle_path_2[i]); std::print("\", ");
+    }
+    std::println("]");
+
+    // --- Indices & Dummies ---
+    std::println("merkle_index_1 = 0");
+    std::println("merkle_index_2 = 1");
+    std::println("is_dummy_1 = false");
+    std::println("is_dummy_2 = false");
+
+    // --- New Notes ---
+    print_helper_note("new_note_1", new_note_1);
+    print_helper_note("new_note_2", new_note_2);
+
+
+    // --- Shared Keys ---
+    print_helper_low_and_high("shared_key_1", shared_key_1.low, shared_key_1.high);
+    print_helper_low_and_high("shared_key_2", shared_key_2.low, shared_key_2.high);
+
+    // --- Randomness (EmbeddedCurveScalar) ---
+    print_helper_scalar("encryption_randomness_for_receiver_1", rand_receiver_1);
+    print_helper_scalar("encryption_randomness_for_receiver_2", rand_receiver_2);
+    print_helper_scalar("encryption_randomness_1_for_funder", rand_1_funder);
+    print_helper_scalar("encryption_randomness_2_for_funder", rand_2_funder);
 }
 
 
