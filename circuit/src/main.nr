@@ -114,30 +114,46 @@ fn verify_new_note(
     assert_eq(new_note.donor, derived_donor_hash, "Donor public key mismatch for new note");
 }
 
+struct Scalar256bit {
+    low: u128,
+    high: u128,
+}
+
+struct Ciphertext {
+    low: Field,
+    high: Field,
+}
+
+fn encrypt_128bit_with_curve_point(
+    secret: u128,
+    shared_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+    salt: Field,
+) -> Field {
+    let keystream = poseidon::bn254::hash_2([shared_point.x, salt]);
+    let encrypted_secret = (secret as Field) + keystream;
+    encrypted_secret
+}
+
 fn verify_encryption(
     encryption_randomness: std::embedded_curve_ops::EmbeddedCurveScalar,
     public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
-    ephemeral_public_point: std::embedded_curve_ops::EmbeddedCurvePoint, // [TX output]
-    shared_secret_low: Field,
-    shared_secret_high: Field,
-    encrypted_key_low: Field,
-    encrypted_key_high: Field,
+    ephemeral_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+    shared_secret: Scalar256bit,
+    encrypted_key: Ciphertext,
 ) {
     {
-        let derived_ephemeral_public_point = std::embedded_curve_ops::fixed_base_scalar_mul(encryption_randomness);
-        assert_eq(derived_ephemeral_public_point.x, ephemeral_public_point.x, "Ephemeral public point X mismatch");
-        assert_eq(derived_ephemeral_public_point.y, ephemeral_public_point.y, "Ephemeral public point Y mismatch");
+        let derived_ephemeral_point = std::embedded_curve_ops::fixed_base_scalar_mul(encryption_randomness);
+        assert_eq(derived_ephemeral_point.x, ephemeral_public_point.x, "Ephemeral public point X mismatch");
+        assert_eq(derived_ephemeral_point.y, ephemeral_public_point.y, "Ephemeral public point Y mismatch");
     }
 
     let shared_point: std::embedded_curve_ops::EmbeddedCurvePoint = std::embedded_curve_ops::multi_scalar_mul([public_point], [encryption_randomness]);
 
-    let keystream_low = poseidon::bn254::hash_2([shared_point.x, 1]);
-    let keystream_high = poseidon::bn254::hash_2([shared_point.x, 2]);
-    let derived_encrypted_key_low = shared_secret_low + keystream_low;
-    let derived_encrypted_key_high = shared_secret_high + keystream_high;
+    let derived_encrypted_key_low = encrypt_128bit_with_curve_point(shared_secret.low, shared_point, 1);
+    let derived_encrypted_key_high = encrypt_128bit_with_curve_point(shared_secret.high, shared_point, 2);
 
-    assert_eq(derived_encrypted_key_low, encrypted_key_low, "Encrypted key low mismatch");
-    assert_eq(derived_encrypted_key_high, encrypted_key_high, "Encrypted key high mismatch");
+    assert_eq(derived_encrypted_key_low, encrypted_key.low, "Encrypted key low mismatch");
+    assert_eq(derived_encrypted_key_high, encrypted_key.high, "Encrypted key high mismatch");
 }
 
 
