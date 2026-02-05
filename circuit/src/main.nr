@@ -203,3 +203,43 @@ fn test_merkle_proof_different_index() {
     
     assert(root_0 != root_1);
 }
+
+#[test]
+fn test_verify_encryption_success() {
+    let recipient_priv_key = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 0x11111,
+        hi: 0x22222,
+    };
+    let recipient_pub_point = std::embedded_curve_ops::fixed_base_scalar_mul(recipient_priv_key);
+
+    
+    let payload = Scalar256bit {
+        low: 100,
+        high: 200,
+    };
+
+    let randomness = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 0xabcdef,
+        hi: 0x123456,
+    };
+    
+    let ephemeral_pub_point = std::embedded_curve_ops::fixed_base_scalar_mul(randomness);
+
+    let shared_point_sender = std::embedded_curve_ops::multi_scalar_mul([recipient_pub_point], [randomness]);
+    
+    let k_low = poseidon::bn254::hash_2([shared_point_sender.x, 1]);
+    let k_high = poseidon::bn254::hash_2([shared_point_sender.x, 2]);
+
+    let expected_ciphertext = Ciphertext {
+        low: (payload.low as Field) + k_low,
+        high: (payload.high as Field) + k_high,
+    };
+
+    verify_encryption(
+        randomness,
+        recipient_pub_point,
+        ephemeral_pub_point,
+        payload,
+        expected_ciphertext
+    );
+}
