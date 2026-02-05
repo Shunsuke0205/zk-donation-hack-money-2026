@@ -8,7 +8,7 @@ struct Note {
     amount: u64,  // Purpose Bound Money amount
     pbm_token_id: u32,
     owner: Field,   // Hash(Pubkey) of Sender (for old) or Receiver (for new)
-    donor: Field,   // Hash(Pubkey) of the Original Donor (Fixed)
+    funder: Field,   // Hash(Pubkey) of the Original Funder (Fixed)
     salt: Field,
 }
 
@@ -17,7 +17,7 @@ fn note_hash(note: Note) -> Field {
         note.amount as Field,
         note.pbm_token_id as Field,
         note.owner,
-        note.donor,
+        note.funder,
         note.salt,
     ];
     poseidon::bn254::hash_5(inputs)
@@ -62,7 +62,7 @@ fn verify_old_note(
             funder_public_point.x,
             funder_public_point.y,
         ]);
-        assert_eq(old_note.donor, derived_funder_hash, "Funder public key mismatch for old note");
+        assert_eq(old_note.funder, derived_funder_hash, "Funder public key mismatch for old note");
     }
     {
         let derived_owner_public_point = std::embedded_curve_ops::fixed_base_scalar_mul(owner_private_key);
@@ -95,7 +95,7 @@ fn verify_new_note(
     new_note_hash: Field,
     pbm_token_id: u32,
     receiver_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
-    donor_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
+    funder_public_point: std::embedded_curve_ops::EmbeddedCurvePoint,
 ) {
     assert_eq(note_hash(new_note), new_note_hash, "New note hash does not match");
 
@@ -107,11 +107,11 @@ fn verify_new_note(
     ]);
     assert_eq(new_note.owner, derived_receiver_hash, "Receiver public key mismatch for new note");
 
-    let derived_donor_hash = poseidon::bn254::hash_2([
-        donor_public_point.x,
-        donor_public_point.y,
+    let derived_funder_hash = poseidon::bn254::hash_2([
+        funder_public_point.x,
+        funder_public_point.y,
     ]);
-    assert_eq(new_note.donor, derived_donor_hash, "Donor public key mismatch for new note");
+    assert_eq(new_note.funder, derived_funder_hash, "Funder public key mismatch for new note");
 }
 
 struct Scalar256bit {
