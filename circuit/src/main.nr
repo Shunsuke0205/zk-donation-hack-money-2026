@@ -243,3 +243,34 @@ fn test_verify_encryption_success() {
         expected_ciphertext
     );
 }
+
+#[test(should_fail)]
+fn test_fail_wrong_randomness() {
+    let recipient_priv_key = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 0x11111,
+        hi: 0x22222,
+    };
+    let recipient_pub = std::embedded_curve_ops::fixed_base_scalar_mul(recipient_priv_key);
+    
+    let randomness_a = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 111,
+        hi: 111,
+    };
+    let randomness_b = std::embedded_curve_ops::EmbeddedCurveScalar {
+        lo: 222,
+        hi: 222,
+    };
+
+    let ephemeral_real = std::embedded_curve_ops::fixed_base_scalar_mul(randomness_a);
+
+    let payload = Scalar256bit { low: 1, high: 1 };
+    let dummy_cipher = Ciphertext { low: 0, high: 0 };
+
+    verify_encryption(
+        randomness_b, 
+        recipient_pub, 
+        ephemeral_real, 
+        payload, 
+        dummy_cipher
+    );
+}
