@@ -33,7 +33,7 @@ fn compute_merkle_proof(
 
     for i in 0..MERKLE_DEPTH {
         let sibling_hash = path[i];
-        let is_right = current_index as u32 % 2;
+        let is_right = current_index % 2;
         if is_right == 0 {
             current_hash = poseidon::bn254::hash_2([current_hash, sibling_hash]);
         } else {
