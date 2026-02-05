@@ -1,0 +1,35 @@
+receiver_1_public_point = { x = "0x0d9e80a6f3f3c9b7328a8760cb3f5eb7c009ddc82f2c9e5fbcfe672c4da67fc1", y = "0x013791c5ed26b3641abd7e66db4508299c5ca4e3efdbe8fc421cab05a8f506ab" }
+receiver_2_public_point = { x = "0x0f54bb01c1c1e705cb08ff2688bd9213d236afd648f0d7021e66ebfbdb2cbc98", y = "0x2e61c5f98b976035665f01d9ed2d10145710bc4451dc93fd31e6dd0f4ac7bec7" }
+funder_public_point = { x = "0x1ae1ff6b0609c6402da539167c35ee99b71179956650d85885650d1dcbf75f6b", y = "0x223cb6f023994c87ea96efa97c03d7dd95f273e1fa80e6f4135ae296d41c7937" }
+pbm_token_id = "1"
+merkle_root_1 = "0x29cd4b335494eb8b59abc71861ff2b7102629c992e4e16cacae1de406feeb1fa"
+merkle_root_2 = "0x29cd4b335494eb8b59abc71861ff2b7102629c992e4e16cacae1de406feeb1fa"
+nullifier_1 = "0x03bb65f0e3a46a5f089c05a84ce764eefbde234a495c5c093b1e77e48dd3158b"
+nullifier_2 = "0x19e4f0752dec4175747e3322df64bfaff96f48c77e3426bf0592fb0967b9bf43"
+new_note_1_hash = "0x1926dfb905dea0fb580ea7dcda881ea99de9abc2de6cdec7d4a18f92d720eef1"
+new_note_2_hash = "0x1aec37027eced5045b88782f3f3fb95eb9fa1a10cf97ab9c8f01cc78d735d3a6"
+encrypted_key_for_receiver_1 = { low = "0x2f3000f4801782b68a26fe8a32b59a361142e2f6e10d9ff92b524fa13657efb2", high = "0x2ea161ef9db14bdc661c1e3d76f1878bc1c70b1c053255d0bf5d2018728bf259" }
+encrypted_key_for_receiver_2 = { low = "0x0fe2f34b4413f5e52c539eff3522bd43b4e15d57ec39b8b7cc30dad4da07caaf", high = "0x0af510119319b1e042f66e6089685dc03a4735177f725528f05629e8e1c23123" }
+encrypted_key_1_for_funder = { low = "0x13add8caaa466d9775663018afe5c2ade9be8ff54803870cba032ec23c3a4b47", high = "0x058f22ecd5b52f5fb98cc1159029a7a4dfb536ef0812b8f660017a67e42bc53e" }
+encrypted_key_2_for_funder = { low = "0x1e15d0b824065ba9be463aaa2af4b51f9775a180b9993ccfef10c7869dbba4e3", high = "0x0d4189aa642fd252e4cd85f89e8eb19ec661b49db96bce95e22a5090b4bceacb" }
+ephemeral_public_point_for_receiver_1 = { x = "0x1f2cbd75183a0cced1f2b4d1121a647b3b421baed26e463b2565b7972ae1a83c", y = "0x0e5a53a4a04e97978af7fb30653dadd81417b6db909fb3dde1ff2b0aa38b86df" }
+ephemeral_public_point_for_receiver_2 = { x = "0x2300815a7382208787e0c425ed1ac3d1713184f7f59eaf96a07fd05304859938", y = "0x1652a2a0dad5b33ed3b7762fa3d42955866c5ce1def93673be3146935c41d4cd" }
+ephemeral_public_point_1_for_funder = { x = "0x0dae5b614c08fba969fafbc0e66060d8ef3218d7355874a15949b329dc69fb33", y = "0x1303ce5bfcd5f861bdb4c4ee545da48b6a99c2bd18ec5a4ae5798b1d713813d7" }
+ephemeral_public_point_2_for_funder = { x = "0x090a176c6b05c96c95d98abefa7847a7c7839411a73b6f1feb31b2ed69ed168d", y = "0x2885d45477c16f2b2d5bfeec5fd1d4fc00aa53969ef5865c848fc406d83a270f" }
+owner_private_key = { hi = "0x00", lo = "0x56ce" }
+old_note_1 = { amount = "70", pbm_token_id = "1", owner = "0x106213eaa17c92dc2ab09cf5c1f131a4c086e9d5b3214750099b45f8d5dee6a0", funder = "0x01842463483dd303b6e394494144faf955f3e4246bfd669f6893cbb403f65987", salt = "0x0377be35" }
+old_note_2 = { amount = "30", pbm_token_id = "1", owner = "0x106213eaa17c92dc2ab09cf5c1f131a4c086e9d5b3214750099b45f8d5dee6a0", funder = "0x01842463483dd303b6e394494144faf955f3e4246bfd669f6893cbb403f65987", salt = "0x0377be35" }
+merkle_path_1 = ["0x0a76bacfa8afe59bf5ba7641ad389e6f2bb6427b8a73a3f5255f30db3cfa6c10", "0x2098f5fb9e239eab3ceac3f27b81e481dc3124d55ffed523a839ee8446b64864", "0x1069673dcdb12263df301a6ff584a7ec261a44cb9dc68df067a4774460b1f1e1", ]
+merkle_path_2 = ["0x0ac1dce09e8fc67dda988df6fb1d2747eb52546fdc8aa1e19a75418ffb4eaec2", "0x2098f5fb9e239eab3ceac3f27b81e481dc3124d55ffed523a839ee8446b64864", "0x1069673dcdb12263df301a6ff584a7ec261a44cb9dc68df067a4774460b1f1e1", ]
+merkle_index_1 = 0
+merkle_index_2 = 1
+is_dummy_1 = false
+is_dummy_2 = false
+new_note_1 = { amount = "40", pbm_token_id = "1", owner = "0x2b028155b4bd4c9cae3a172b908848e9289e78a9f59bff4feb4a5de037d69f34", funder = "0x01842463483dd303b6e394494144faf955f3e4246bfd669f6893cbb403f65987", salt = "0x0377be35" }
+new_note_2 = { amount = "60", pbm_token_id = "1", owner = "0x2a6694f14602468ae40f0a9e91e8506e9992d344860644a71714b9ca5ea5179d", funder = "0x01842463483dd303b6e394494144faf955f3e4246bfd669f6893cbb403f65987", salt = "0x0377be35" }
+shared_key_1 = { low = "12345", high = "0" }
+shared_key_2 = { low = "67890", high = "0" }
+encryption_randomness_for_receiver_1 = { hi = "0x00", lo = "0x65" }
+encryption_randomness_for_receiver_2 = { hi = "0x00", lo = "0x66" }
+encryption_randomness_1_for_funder = { hi = "0x00", lo = "0x67" }
+encryption_randomness_2_for_funder = { hi = "0x00", lo = "0x68" }
